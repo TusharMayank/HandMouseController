@@ -1,0 +1,24 @@
+# Hand Mouse Controller - Python Dependencies
+# Python 3.10 recommended
+
+# Computer Vision & Hand Tracking
+opencv-python==4.10.0.84
+mediapipe==0.10.5
+
+# Mouse & Keyboard Control
+pyautogui==0.9.54
+
+# Mathematical Operations
+numpy>=2.0.0
+
+# Modern UI Framework
+customtkinter==5.2.0
+
+# Image Processing
+Pillow==10.0.1
+
+# System Tray Support
+pystray==0.19.5
+
+# Optional: For creating Windows executable
+# pyinstaller==5.13.0
