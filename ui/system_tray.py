@@ -4,12 +4,9 @@ Allows application to run in system tray
 """
 
 import pystray
-from PIL import Image, ImageDraw
-from utils.config import (
-    STATUS_TRACKING,
-    STATUS_PAUSED,
-    WINDOW_TITLE
-)
+from PIL import Image
+import os
+from utils.config import WINDOW_TITLE
 
 
 class SystemTray:
@@ -26,26 +23,66 @@ class SystemTray:
 	# noinspection PyMethodMayBeStatic
 	def _create_icon_image(self):
 		"""
-		Create a simple hand icon for system tray
+		Load custom icon or create fallback icon for system tray
 
 		Returns:
 			PIL Image object
 		"""
-		# Create a 64x64 image
+		# Try to load custom icon
+		icon_paths = [
+			'app_icon.ico',
+			'app_icon.png',
+			os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app_icon.ico'),
+			os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app_icon.png')
+		]
+		
+		for icon_path in icon_paths:
+			try:
+				if os.path.exists(icon_path):
+					img = Image.open(icon_path)
+					# Resize to 64x64 for system tray
+					img = img.resize((64, 64), Image.Resampling.LANCZOS)
+					# Convert to RGB if needed
+					if img.mode != 'RGB':
+						# Create white background for transparency
+						bg = Image.new('RGB', (64, 64), (255, 255, 255))
+						if img.mode == 'RGBA':
+							bg.paste(img, mask=img.split()[3])  # Use alpha channel as mask
+						else:
+							bg.paste(img)
+						return bg
+					return img
+			except Exception as e:
+				print(f"Could not load icon from {icon_path}: {e}")
+				continue
+		
+		# Fallback: Create simple hand icon if custom icon not found
+		print("Using fallback icon for system tray")
+		return self._create_fallback_icon()
+	
+	def _create_fallback_icon(self):
+		"""
+		Create simple hand icon as fallback
+
+		Returns:
+			PIL Image object
+		"""
+		from PIL import ImageDraw
+		
 		width = 64
 		height = 64
-		image = Image.new('RGB', (width, height), color='black')
+		image = Image.new('RGB', (width, height), color='white')
 		draw = ImageDraw.Draw(image)
 		
-		# Draw a simple hand shape (rectangle palm + fingers)
+		# Draw a simple hand shape
 		# Palm
-		draw.rectangle((20, 35, 45, 55), fill='white')
+		draw.rectangle((20, 35, 45, 55), fill='dodgerblue')
 		
 		# Fingers
-		draw.rectangle((20, 25, 25, 35), fill='white')  # Thumb
-		draw.rectangle((28, 20, 32, 35), fill='white')  # Index
-		draw.rectangle((35, 18, 39, 35), fill='white')  # Middle
-		draw.rectangle((42, 22, 46, 35), fill='white')  # Ring
+		draw.rectangle((20, 25, 25, 35), fill='dodgerblue')  # Thumb
+		draw.rectangle((28, 20, 32, 35), fill='dodgerblue')  # Index
+		draw.rectangle((35, 18, 39, 35), fill='dodgerblue')  # Middle
+		draw.rectangle((42, 22, 46, 35), fill='dodgerblue')  # Ring
 		
 		return image
 	

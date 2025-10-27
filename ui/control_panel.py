@@ -108,6 +108,16 @@ class ControlPanel(ctk.CTkScrollableFrame):
 			hover_color="darkblue"
 		)
 		self.settings_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+		
+		# About button
+		self.about_button = ctk.CTkButton(
+			self,
+			text="About",
+			command=self._on_about,
+			fg_color="purple",
+			hover_color="darkviolet"
+		)
+		self.about_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 	
 	def _on_start(self):
 		"""Called when Start button is clicked"""
@@ -140,6 +150,11 @@ class ControlPanel(ctk.CTkScrollableFrame):
 		"""Called when Settings button is clicked"""
 		if 'settings' in self.callbacks:
 			self.callbacks['settings']()
+	
+	def _on_about(self):
+		"""Called when About button is clicked"""
+		if 'about' in self.callbacks:
+			self.callbacks['about']()
 	
 	def _set_tracking_state(self, is_tracking):
 		"""Update button states based on tracking status"""

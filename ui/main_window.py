@@ -13,6 +13,7 @@ from ui.control_panel import ControlPanel
 from ui.system_tray import SystemTray
 from ui.settings_window import SettingsWindow
 from ui.cursor_effects import CursorEffects
+from ui.about_dialog import AboutDialog
 from utils.config import (
     WINDOW_TITLE,
     MIN_WINDOW_WIDTH,
@@ -56,6 +57,15 @@ class MainWindow(ctk.CTk):
 		# Set minimum size
 		self.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 		
+		# Set window icon
+		try:
+			import os
+			icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app_icon.ico')
+			if os.path.exists(icon_path):
+				self.iconbitmap(icon_path)
+		except Exception as e:
+			pass  # Continue without icon if not found
+		
 		# Tracking state
 		self.is_tracking = False
 		self.is_running = False
@@ -86,7 +96,8 @@ class MainWindow(ctk.CTk):
 			'always_on_top': self.toggle_always_on_top,
 			'hide_preview': self.toggle_hide_preview,
 			'minimize_to_tray': self.minimize_to_tray,
-			'settings': self.open_settings
+			'settings': self.open_settings,
+			'about': self.open_about
 		}
 		self.control_panel = ControlPanel(self, callbacks)
 		self.control_panel.pack(padx=10, pady=10, fill="both", expand=True)
@@ -313,6 +324,13 @@ class MainWindow(ctk.CTk):
 		else:
 			# Window already exists, just bring it to front
 			self.settings_window.focus()
+	
+	def open_about(self):
+		"""Open about dialog"""
+		try:
+			AboutDialog(self)
+		except Exception as e:
+			print(f"Error opening About dialog: {e}")
 	
 	def apply_new_settings(self, new_values):
 		"""Apply settings from settings window"""

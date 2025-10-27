@@ -41,7 +41,7 @@ class GestureRecognizer:
 		self.drag_pinch_frames = 0  # Count consecutive pinch frames
 		self.drag_release_frames = 0  # Count consecutive release frames
 		self.DRAG_START_FRAMES = 3  # Need 3 frames to start drag
-		self.DRAG_STOP_FRAMES = 5  # Need 5 frames to stop drag
+		self.DRAG_STOP_FRAMES = 6  # Need 6 frames to stop drag
 		
 		# Landmark IDs for fingertips
 		self.THUMB_TIP = 4
