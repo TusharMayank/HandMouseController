@@ -279,6 +279,6 @@ Special thanks to the creators and maintainers of:
 
 **Made with ❤️ by Tushar Mayank**
 
-*Last Updated: 2024*
+*Last Updated: 2025*
 
 </div>
