@@ -105,3 +105,8 @@ STATUS_TRACKING = "Tracking Active"
 STATUS_PAUSED = "Paused"
 STATUS_NO_CAMERA = "Camera Not Found"
 STATUS_NO_HAND = "No Hand Detected"
+
+
+# Text-to-Speech Settings
+ENABLE_SPEECH = True  # Default state: Speech is ON
+SPEECH_VOLUME = 90  # Default volume (0-100)

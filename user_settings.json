@@ -6,5 +6,7 @@
     "scroll_speed_fast": 60,
     "scroll_activation": 50,
     "pinch_sensitivity": 50,
-    "double_click_time": 50
+    "double_click_time": 50,
+    "enable_speech": 1,
+    "speech_volume": 90
 }

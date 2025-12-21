@@ -20,5 +20,8 @@ Pillow==10.0.1
 # System Tray Support
 pystray==0.19.5
 
+# Text to Speech
+pyttsx3==2.90
+
 # Optional: For creating Windows executable
 # pyinstaller==5.13.0
