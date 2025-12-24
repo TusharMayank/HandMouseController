@@ -14,7 +14,8 @@ from ui.system_tray import SystemTray
 from ui.settings_window import SettingsWindow
 from ui.cursor_effects import CursorEffects
 from ui.about_dialog import AboutDialog
-from utils.speech import SpeechAnnouncer  # <--- NEW IMPORT
+from utils.speech import SpeechAnnouncer
+from ui.compact_window import CompactWindow
 from utils.config import (
     WINDOW_TITLE,
     MIN_WINDOW_WIDTH,
@@ -83,6 +84,9 @@ class MainWindow(ctk.CTk):
 		# Text-to-Speech Engine
 		self.speech_announcer = SpeechAnnouncer()  # <--- INITIALIZE SPEECH ENGINE
 
+		# Compact Window Reference
+		self.compact_window = None
+
 		# Initialize core components
 		self.hand_tracker = HandTracker()
 		self.gesture_recognizer = GestureRecognizer(self.hand_tracker)
@@ -101,7 +105,8 @@ class MainWindow(ctk.CTk):
 			'hide_preview': self.toggle_hide_preview,
 			'minimize_to_tray': self.minimize_to_tray,
 			'settings': self.open_settings,
-			'about': self.open_about
+			'about': self.open_about,
+			'compact_mode': self.toggle_compact_mode_from_main
 		}
 		self.control_panel = ControlPanel(self, callbacks)
 		self.control_panel.pack(padx=10, pady=10, fill="both", expand=True)
@@ -118,8 +123,74 @@ class MainWindow(ctk.CTk):
 			self.system_tray = SystemTray(tray_callbacks)
 			self.system_tray.start()
 
+		# Force the window to hide before the first draw and open Compact Mode
+		self.withdraw()
+		self.after(10, self.switch_to_compact_mode)
+
 		# Handle window close event
 		self.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+	def switch_to_compact_mode(self):
+		"""Hide main window and show compact window"""
+		self.withdraw()
+
+		if self.compact_window is None or not self.compact_window.winfo_exists():
+			callbacks = {
+				'start': self.start_tracking,
+				'stop': self.stop_tracking,
+				'settings': self.open_settings,
+				'toggle_speech': self.toggle_speech,
+				'switch_to_full': self.switch_to_full_mode
+			}
+
+			from utils import config
+			initial_states = {
+				'is_tracking': self.is_tracking,
+				'speech_enabled': config.ENABLE_SPEECH
+			}
+
+			self.compact_window = CompactWindow(self, callbacks, initial_states)
+		else:
+			# Show the window
+			self.compact_window.deiconify()
+			self.compact_window.update_tracking_state(self.is_tracking)
+
+			# RESET TOGGLE: Ensure it is set to 1 (Compact Mode/Green)
+			# when returning to this window
+			self.compact_window.mode_var.set(1)
+
+	def switch_to_full_mode(self):
+		"""Hide compact window and show main window"""
+		self.deiconify()
+
+		if self.compact_window:
+			self.compact_window.withdraw()
+
+		# RESET TOGGLE: Ensure Main Window switch is set to 0 (Developer Mode/Blue)
+		if hasattr(self.control_panel, 'mode_var'):
+			self.control_panel.mode_var.set(0)
+
+	def toggle_compact_mode_from_main(self, is_enabled):
+		"""Callback from Main Window 'Compact Mode' toggle"""
+		if is_enabled:
+			self.switch_to_compact_mode()
+
+	# If disabled, we stay in Main Window (already handled by switch logic)
+
+	def toggle_speech(self, enabled):
+		"""Callback for speech toggle"""
+		from utils import config
+		config.ENABLE_SPEECH = enabled
+		if self.speech_announcer:
+			self.speech_announcer.toggle(enabled)
+
+		# Update settings window if open
+		if self.settings_window and self.settings_window.winfo_exists():
+			if hasattr(self.settings_window, 'speech_switch'):
+				if enabled:
+					self.settings_window.speech_switch.select()
+				else:
+					self.settings_window.speech_switch.deselect()
 
 	def start_tracking(self):
 		"""Start hand tracking and mouse control"""
@@ -145,6 +216,10 @@ class MainWindow(ctk.CTk):
 
 		# Start UI update loop
 		self._update_ui()
+
+		# Update Compact Window Button
+		if self.compact_window and self.compact_window.winfo_exists():
+			self.compact_window.update_tracking_state(True)
 
 	def _initialize_and_track(self):
 		"""Initialize camera and start tracking (runs in background thread)"""
@@ -240,6 +315,10 @@ class MainWindow(ctk.CTk):
 		# Update UI
 		self.control_panel.update_gesture("None")
 		self.control_panel.update_status(STATUS_READY)
+
+		# Update Compact Window Button
+		if self.compact_window and self.compact_window.winfo_exists():
+			self.compact_window.update_tracking_state(False)
 
 	def _update_ui(self):
 		"""UI update loop - called every frame on main thread"""
@@ -391,6 +470,16 @@ class MainWindow(ctk.CTk):
 				self.mouse_controller.smoother.smoothing_factor = new_values['SMOOTHING_FACTOR']
 
 		print(f"Settings applied! Speech Enabled: {config.ENABLE_SPEECH}")
+
+		# Sync Speech switch in Compact Window if settings changed it
+		if 'ENABLE_SPEECH' in new_values:
+			if self.compact_window and self.compact_window.winfo_exists():
+				# Accessing public attribute
+				if new_values['ENABLE_SPEECH']:
+					self.compact_window.speech_switch.select()
+				else:
+					self.compact_window.speech_switch.deselect()
+
 	def on_closing(self):
 		"""Handle window close button"""
 		if self.system_tray and self.is_tracking:
