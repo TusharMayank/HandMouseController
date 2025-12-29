@@ -1,0 +1,12 @@
+{
+    "movement_sensitivity": 60,
+    "smoothing": 70,
+    "scroll_speed_slow": 30,
+    "scroll_speed_medium": 50,
+    "scroll_speed_fast": 60,
+    "scroll_activation": 50,
+    "pinch_sensitivity": 50,
+    "double_click_time": 50,
+    "enable_speech": 1,
+    "speech_volume": 90
+}

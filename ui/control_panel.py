@@ -163,11 +163,19 @@ class ControlPanel(ctk.CTkScrollableFrame):
 		"""Called when Start button is clicked"""
 		if 'start' in self.callbacks:
 			self.callbacks['start']()
+<<<<<<< HEAD
+=======
+		self._set_tracking_state(True)
+>>>>>>> aa99d67b2636327b6d36232f448c24af70f8cb91
 
 	def _on_stop(self):
 		"""Called when Stop button is clicked"""
 		if 'stop' in self.callbacks:
 			self.callbacks['stop']()
+<<<<<<< HEAD
+=======
+		self._set_tracking_state(False)
+>>>>>>> aa99d67b2636327b6d36232f448c24af70f8cb91
 
 	def _on_always_on_top_toggle(self):
 		"""Called when Always on Top is toggled"""
@@ -194,7 +202,11 @@ class ControlPanel(ctk.CTkScrollableFrame):
 		if 'about' in self.callbacks:
 			self.callbacks['about']()
 
+<<<<<<< HEAD
 	def set_tracking_state(self, is_tracking):
+=======
+	def _set_tracking_state(self, is_tracking):
+>>>>>>> aa99d67b2636327b6d36232f448c24af70f8cb91
 		"""Update button states based on tracking status"""
 		self.is_tracking = is_tracking
 

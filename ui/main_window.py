@@ -207,8 +207,11 @@ class MainWindow(ctk.CTk):
 		if self.system_tray:
 			self.system_tray.set_tracking_state(True)
 
+<<<<<<< HEAD
 		self.control_panel.set_tracking_state(True)
 
+=======
+>>>>>>> aa99d67b2636327b6d36232f448c24af70f8cb91
 		# Start camera and tracking in separate thread
 		self.tracking_thread = threading.Thread(target=self._initialize_and_track, daemon=True)
 		self.tracking_thread.start()
@@ -316,7 +319,11 @@ class MainWindow(ctk.CTk):
 
 		# Update UI
 		self.control_panel.update_gesture("None")
+<<<<<<< HEAD
 		self.control_panel.set_tracking_state(False)
+=======
+		self.control_panel.update_status(STATUS_READY)
+>>>>>>> aa99d67b2636327b6d36232f448c24af70f8cb91
 
 		# Update Compact Window Button
 		if self.compact_window and self.compact_window.winfo_exists():
