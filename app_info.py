@@ -3,7 +3,7 @@ Application Information and Metadata
 """
 
 APP_NAME = "Hand Mouse Controller"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.3.0"
 APP_AUTHOR = "Tushar Mayank"
 APP_DESCRIPTION = "AI-powered hand gesture mouse control using computer vision"
 APP_COPYRIGHT = "Copyright © 2025 Tushar Mayank"
